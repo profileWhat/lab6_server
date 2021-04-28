@@ -7,7 +7,7 @@ import java.io.Serializable;
  */
 public class ReceivedCommand implements Serializable {
     private static final long serialVersionUID = 1L;
-    private final CommandName commandName;
+    private final CommandName commandsName;
     private final Object argument;
 
     /**
@@ -16,7 +16,7 @@ public class ReceivedCommand implements Serializable {
      * @param argument to set in object
      */
     protected ReceivedCommand(CommandName commandName, Object argument) {
-        this.commandName = commandName;
+        this.commandsName = commandName;
         this.argument = argument;
     }
 
@@ -29,10 +29,12 @@ public class ReceivedCommand implements Serializable {
     }
 
     /**
-     * Method for get command name
+     * Method for get command name, this method useless on client, but it uses on server
      * @return command name
      */
     public CommandName getCommandName() {
-        return commandName;
+        return commandsName;
     }
+
+
 }

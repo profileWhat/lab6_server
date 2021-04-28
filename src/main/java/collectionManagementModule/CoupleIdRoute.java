@@ -10,7 +10,7 @@ public class CoupleIdRoute implements Serializable {
     private final Route route;
 
     /**
-     * Construcor for load id and route
+     * Constructor for load id and route
      *
      * @param id    to load to couple
      * @param route to load to route
