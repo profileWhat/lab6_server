@@ -1,0 +1,35 @@
+package commands;
+
+import serverManagementModule.ClientCommandReceiver;
+import serverManagementModule.OutputDeviceWorker;
+
+public class UndefinedCommand implements Command{
+    private final ClientCommandReceiver cr;
+    /**
+     * Constructor for load fields
+     *
+     * @param cr for load to command
+     */
+    public UndefinedCommand(ClientCommandReceiver cr) {
+        this.cr = cr;
+    }
+
+    /**
+     * Method for execute Command
+     *
+     * @param object for set argument
+     */
+    @Override
+    public void execute(Object object) {
+        cr.notDefine();
+    }
+
+    /**
+     * Method for describe command
+     */
+    @Override
+    public void describe() {
+        OutputDeviceWorker.getOutputDevice().sendMessage("The command for describe undefined command");
+    }
+
+}
