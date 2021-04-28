@@ -9,10 +9,15 @@ import java.net.SocketAddress;
 import java.nio.channels.ServerSocketChannel;
 
 /**
- * Main class that runs the program
+ * Main class that runs the server
  */
 public class Server {
-    private static SocketAddress socketAddr = new InetSocketAddress("localhost", 1221);
+    private static final SocketAddress socketAddr = new InetSocketAddress("localhost", 1221);
+
+    /**
+     * Static method that started when server run
+     * @param args to set args
+     */
     static public void main(String[] args) {
         ServerSocketChannel serverSocketChannel = null;
         try {
@@ -26,7 +31,7 @@ public class Server {
         FileWorker.getFileWorker().setFileName(filePath);
         CollectionManagement collectionManagement = new CollectionManagement();
         collectionManagement.addRoutes(JsonWorker.getJsonWorker().deserializeToRouteArray());
-        ServerWorker serverWorker= new ServerWorker(serverSocketChannel.socket(), collectionManagement, 0);
+        ServerWorker serverWorker= new ServerWorker(serverSocketChannel.socket(), collectionManagement);
         serverWorker.start();
     }
 

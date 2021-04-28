@@ -1,7 +1,6 @@
 package fileManagementModule;
 
 import java.io.*;
-import java.util.HashSet;
 
 import serverManagementModule.OutputDeviceWorker;
 
@@ -12,11 +11,9 @@ public class FileWorker {
     private String fileName;
     private static FileWorker fileWorker;
     private boolean isNotWorkedFile;
-    private HashSet<String> scriptsNameHashSet;
 
     private FileWorker() {
         this.isNotWorkedFile = false;
-        scriptsNameHashSet = new HashSet<>();
     }
 
     /**
@@ -100,7 +97,4 @@ public class FileWorker {
         return isNotWorkedFile;
     }
 
-    public HashSet<String> getScriptsNameHashSet() {
-        return scriptsNameHashSet;
-    }
 }

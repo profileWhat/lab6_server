@@ -15,18 +15,15 @@ public class ServerWorker {
     private final CommandHandler commandHandler;
     private final CollectionManagement collectionManagement;
     private final CommandInvoker commandInvoker;
-    private final int executionDepth;
     private final ServerSocket server;
     /**
      * Constructor of Client Worker. Load all param, init Client Command Receiver, Command Handler to work with input Command, Reader to read Values from file and register Command.
      * @param collectionManagement to load collection to Client Worker
-     * @param executeDepth         to detect the depth execution
      */
-    public ServerWorker(ServerSocket server, CollectionManagement collectionManagement, int executeDepth) {
+    public ServerWorker(ServerSocket server, CollectionManagement collectionManagement) {
         this.server = server;
         this.collectionManagement = collectionManagement;
         this.commandInvoker = new CommandInvoker();
-        this.executionDepth = executeDepth + 1;
         ClientCommandReceiver clientReceiver = new ClientCommandReceiver(this);
         commandInvoker.register(CommandName.INFO, new InfoCommand(collectionManagement));
         commandInvoker.register(CommandName.SHOW, new ShowCommand(collectionManagement));
@@ -49,7 +46,7 @@ public class ServerWorker {
     }
 
     /**
-     * Method for start Client and programme.
+     * Method for start Client and programme. That method will working endless while server won't stop working
      */
     public void start() {
         AcceptingConnections acceptingConnections = new AcceptingConnections(server);
@@ -92,21 +89,4 @@ public class ServerWorker {
     }
 
 
-    /**
-     * Method for get Execution Depth
-     *
-     * @return Execution Depth
-     */
-    public int getExecutionDepth() {
-        return executionDepth;
-    }
-
-    /**
-     * Method for get Command Handler
-     *
-     * @return Command Handler
-     */
-    public CommandHandler getCommandHandler() {
-        return commandHandler;
-    }
 }

@@ -4,13 +4,24 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+/**
+ * Class for set and accept connection of user
+ */
 public class AcceptingConnections {
-    private ServerSocket server;
+    private final ServerSocket server;
 
+    /**
+     * Constructor for set server socket
+     * @param server to set server socket
+     */
     public AcceptingConnections(ServerSocket server) {
         this.server = server;
     }
 
+    /**
+     * Method for accepting connections
+     * @return socket(client socket)
+     */
     public Socket connectAccept() {
         Socket client = null;
         try {

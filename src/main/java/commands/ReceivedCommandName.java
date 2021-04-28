@@ -1,5 +1,8 @@
 package commands;
 
+/**
+ * Enum of received command name that user can use
+ */
 public enum ReceivedCommandName {
     ADD,
     CLEAR,

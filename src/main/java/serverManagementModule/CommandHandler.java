@@ -18,9 +18,12 @@ public class CommandHandler {
         this.commandInvoker = commandInvoker;
     }
 
-
-    public void execute(ReceivedCommand receivedCommand) throws WrongCommandException {
-        commandInvoker.execute(receivedCommand.getCommandName(),receivedCommand.getArgument());
+    /**
+     * Method for execute command by command type
+     * @param receivedCommand to get received command type
+     */
+    public void execute(ReceivedCommand receivedCommand)  {
+        commandInvoker.execute(receivedCommand.getCommandName(), receivedCommand.getArgument());
     }
 
 }

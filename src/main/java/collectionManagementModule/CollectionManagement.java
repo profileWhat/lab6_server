@@ -192,7 +192,7 @@ public class CollectionManagement {
                     Comparator.comparingDouble(Route::getDistance));
             pqCompareByDistance.addAll(collection);
             for (Route route : pqCompareByDistance) {
-                OutputDeviceWorker.getOutputDevice().describeDistance(route.getDistance());
+                OutputDeviceWorker.getOutputDevice().sendDistance(route.getDistance());
                 OutputDeviceWorker.getOutputDevice().sendMessage("\n");
             }
         } else OutputDeviceWorker.getOutputDevice().sendMessage("Collection is Empty, command can't be executed \n");

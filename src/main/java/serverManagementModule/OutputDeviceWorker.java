@@ -39,9 +39,8 @@ public class OutputDeviceWorker {
         System.out.println(s);
     }
     /**
-     * Method for describe String
-     *
-     * @param message to describe string
+     * Method for send message to client
+     * @param message to sent to client
      */
     public void sendMessage(String message) {
         try {
@@ -51,6 +50,9 @@ public class OutputDeviceWorker {
         }
     }
 
+    /**
+     * Method for sent end fo script execution flag to client
+     */
     public void sendEndOfScriptExFlag() {
         try {
             byte[] bytes = {1};
@@ -61,7 +63,6 @@ public class OutputDeviceWorker {
     }
     /**
      * Method for describe Exception
-     *
      * @param e to describe exception
      */
     public void describeException(Exception e) {
@@ -69,7 +70,7 @@ public class OutputDeviceWorker {
     }
 
     /**
-     * Method to describe Collection Info
+     * Method to sent info about collection to client
      *
      * @param collectionClassName to describe collection class name
      * @param creationDate        to describe collection date creation
@@ -88,11 +89,10 @@ public class OutputDeviceWorker {
     }
 
     /**
-     * Method for describe Distance
-     *
-     * @param distance to describe Distance
+     * Method for send message about distance to client
+     * @param distance to send Distance
      */
-    public void describeDistance(Double distance) {
+    public void sendDistance(Double distance) {
         try {
             outputStream.write(distance.toString().getBytes());
         } catch (IOException e) {
@@ -101,8 +101,7 @@ public class OutputDeviceWorker {
     }
 
     /**
-     * Method for show Route
-     *
+     * Method for send information about Routes to client
      * @param route to show it
      */
     public void showRoute(Route route) {

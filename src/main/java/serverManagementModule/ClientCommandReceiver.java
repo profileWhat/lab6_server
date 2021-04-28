@@ -40,11 +40,9 @@ public class ClientCommandReceiver {
 
     /**
      * Method for execute ExecuteScript Command.
-     *
      * @param fileName to start the script execution with the specified name
-     * @throws ReuseExecuteScriptException if recursion is detected in the script execution
      */
-    public void executeScript(String fileName) throws ReuseExecuteScriptException {
+    public void executeScript(String fileName) {
         OutputDeviceWorker.getOutputDevice().sendMessage("the script execution has started \n");
         int fileNameSetSize = fileNameSet.size();
         this.fileNameSet.add(fileName);
@@ -59,6 +57,9 @@ public class ClientCommandReceiver {
     }
 
 
+    /**
+     * Method for describe not define commands
+     */
     public void notDefine() {
         OutputDeviceWorker.getOutputDevice().sendMessage("Undefined command can't be executed \n");
     }

@@ -10,13 +10,25 @@ import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
+/**
+ * Class for reading request from client
+ */
 public class RequestReading {
     private final Socket client;
 
+    /**
+     * Constructor for set socket client
+     * @param client to set it
+     */
     public RequestReading(Socket client) {
         this.client = client;
     }
 
+    /**
+     * Method for read command that client sent to server
+     * @return received command
+     * @throws IOException if connection has been broken
+     */
     public ReceivedCommand readCommand() throws IOException{
         ReceivedCommand receivedCommand = null;
         SocketChannel clientSocketChannel = client.getChannel();

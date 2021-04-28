@@ -18,13 +18,9 @@ public class CommandInvoker {
      *
      * @param commandName to invoke command by name
      * @param object        to set argument of command
-     * @throws WrongCommandException if command not registered
      */
-    public void execute(CommandName commandName, Object object) throws WrongCommandException {
+    public void execute(CommandName commandName, Object object) {
         Command command = commandMap.get(commandName);
-        if (command == null) {
-            throw new WrongCommandException("No command registered for " + commandName);
-        }
         command.execute(object);
     }
 
@@ -40,7 +36,6 @@ public class CommandInvoker {
 
     /**
      * Method for return command Map
-     *
      * @return command Map
      */
     public HashMap<CommandName, Command> getCommandMap() {
