@@ -33,7 +33,7 @@ public class PrintFieldAscendingDistanceCommand implements Command {
      */
     @Override
     public void describe() {
-        OutputDeviceWorker.getOutputDevice().sendMessage("The command for print element field ascending distance");
+        OutputDeviceWorker.getOutputDevice().createMessage("The command for print element field ascending distance");
     }
 
 }

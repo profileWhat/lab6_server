@@ -36,7 +36,7 @@ public class RemoveByIdCommand implements Command {
      */
     @Override
     public void describe() {
-        OutputDeviceWorker.getOutputDevice().sendMessage("The command for remove Route by id");
+        OutputDeviceWorker.getOutputDevice().createMessage("The command for remove Route by id");
     }
 
 }

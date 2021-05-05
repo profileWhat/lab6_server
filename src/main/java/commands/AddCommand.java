@@ -1,9 +1,8 @@
 package commands;
 
-import serverManagementModule.OutputDeviceWorker;
 import collectionManagementModule.Route;
+import serverManagementModule.OutputDeviceWorker;
 import collectionManagementModule.CollectionManagement;
-
 
 /**
  * the Command for add Route to collection
@@ -38,7 +37,7 @@ public class AddCommand implements Command {
      */
     @Override
     public void describe() {
-        OutputDeviceWorker.getOutputDevice().sendMessage("The command for add route to collection");
+        OutputDeviceWorker.getOutputDevice().createMessage("The command for add route to collection");
     }
 
 }

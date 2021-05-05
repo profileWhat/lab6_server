@@ -66,7 +66,7 @@ public class CollectionManagement {
     public void add(Route route) {
         route.setId(getRandomId());
         collection.add(route);
-        OutputDeviceWorker.getOutputDevice().sendMessage("Route added \n");
+        OutputDeviceWorker.getOutputDevice().createMessage("Route added \n");
     }
 
     /**
@@ -79,15 +79,19 @@ public class CollectionManagement {
         if (newCollection.removeIf(route -> (coupleIdRoute.getId().equals(route.getId())))) {
             coupleIdRoute.getRoute().setId(coupleIdRoute.getId());
             newCollection.add(coupleIdRoute.getRoute());
-            OutputDeviceWorker.getOutputDevice().sendMessage("Route updated \n");
-        } else OutputDeviceWorker.getOutputDevice().sendMessage("Collection haven't got element with input id \n");
+            OutputDeviceWorker.getOutputDevice().createMessage("Route updated \n");
+        } else OutputDeviceWorker.getOutputDevice().createMessage("Collection haven't got element with input id \n");
     }
 
     /**
      * Method for get info about collection
      */
     public void info() {
-        OutputDeviceWorker.getOutputDevice().describeCMInfo(collection.getClass().getName(), creationDate, collection.size());
+        String message =
+                "Type of collection: " + collection.getClass().getName() + '\n' +
+                        "Date of creation: " + creationDate + '\n' +
+                        "Size of collection: " + collection.size() + '\n';
+        OutputDeviceWorker.getOutputDevice().createMessage(message);
     }
 
     /**
@@ -97,8 +101,8 @@ public class CollectionManagement {
      */
     public void removeById(Long id) {
         if (collection.removeIf(route -> (id.equals(route.getId())))) {
-            OutputDeviceWorker.getOutputDevice().sendMessage("Route by id deleted \n");
-        } else OutputDeviceWorker.getOutputDevice().sendMessage("Route by id not found, it can't be deleted \n");
+            OutputDeviceWorker.getOutputDevice().createMessage("Route by id deleted \n");
+        } else OutputDeviceWorker.getOutputDevice().createMessage("Route by id not found, it can't be deleted \n");
 
     }
 
@@ -107,7 +111,7 @@ public class CollectionManagement {
      */
     public void clear() {
         collection.clear();
-        OutputDeviceWorker.getOutputDevice().sendMessage("Collection cleared \n");
+        OutputDeviceWorker.getOutputDevice().createMessage("Collection cleared \n");
     }
 
     /**
@@ -116,9 +120,9 @@ public class CollectionManagement {
     public void removeFirst() {
         if (collection.size() != 0) {
             collection.poll();
-            OutputDeviceWorker.getOutputDevice().sendMessage("Removed first element \n");
+            OutputDeviceWorker.getOutputDevice().createMessage("Removed first element \n");
         } else
-            OutputDeviceWorker.getOutputDevice().sendMessage("Collection haven't got elements, cant remove first element \n");
+            OutputDeviceWorker.getOutputDevice().createMessage("Collection haven't got elements, cant remove first element \n");
     }
 
     /**
@@ -129,11 +133,11 @@ public class CollectionManagement {
     public void removeGreater(Route currentRoute) {
         if (collection.size() != 0) {
             if (collection.removeIf(route -> (currentRoute.getDistance() < route.getDistance()))) {
-                OutputDeviceWorker.getOutputDevice().sendMessage("Remove all element greater than input element \n");
+                OutputDeviceWorker.getOutputDevice().createMessage("Remove all element greater than input element \n");
             } else
-                OutputDeviceWorker.getOutputDevice().sendMessage("Input route so small, elements of collection weren't deleted \n");
+                OutputDeviceWorker.getOutputDevice().createMessage("Input route so small, elements of collection weren't deleted \n");
         } else
-            OutputDeviceWorker.getOutputDevice().sendMessage("Collection haven't got elements, can't remove greater element \n");
+            OutputDeviceWorker.getOutputDevice().createMessage("Collection haven't got elements, can't remove greater element \n");
     }
 
     /**
@@ -144,11 +148,11 @@ public class CollectionManagement {
     public void removeLower(Route currentRoute) {
         if (collection.size() != 0) {
             if (collection.removeIf(route -> (currentRoute.getDistance() > route.getDistance())))
-                OutputDeviceWorker.getOutputDevice().sendMessage("Remove all element lower than input element \n");
+                OutputDeviceWorker.getOutputDevice().createMessage("Remove all element lower than input element \n");
             else
-                OutputDeviceWorker.getOutputDevice().sendMessage("Input route so high, elements of collection weren't deleted \n");
+                OutputDeviceWorker.getOutputDevice().createMessage("Input route so high, elements of collection weren't deleted \n");
         } else
-            OutputDeviceWorker.getOutputDevice().sendMessage("Collection haven't got elements, can't remove lower element \n");
+            OutputDeviceWorker.getOutputDevice().createMessage("Collection haven't got elements, can't remove lower element \n");
     }
 
     /**
@@ -159,10 +163,10 @@ public class CollectionManagement {
     public void removeAllByDistance(Double currentDistance) {
         if (collection.size() != 0) {
             if (collection.removeIf(route -> (currentDistance == route.getDistance().doubleValue())))
-                OutputDeviceWorker.getOutputDevice().sendMessage("Remove all element equal by distance \n");
-            else OutputDeviceWorker.getOutputDevice().sendMessage("Collection haven't got element with input distance \n");
+                OutputDeviceWorker.getOutputDevice().createMessage("Remove all element equal by distance \n");
+            else OutputDeviceWorker.getOutputDevice().createMessage("Collection haven't got element with input distance \n");
         } else
-            OutputDeviceWorker.getOutputDevice().sendMessage("Collection haven't got elements, cant remove elements \n");
+            OutputDeviceWorker.getOutputDevice().createMessage("Collection haven't got elements, cant remove elements \n");
     }
 
     /**
@@ -178,9 +182,9 @@ public class CollectionManagement {
                     count++;
                 }
             }
-            OutputDeviceWorker.getOutputDevice().sendMessage("Elements with distance greater than input distance found" + count +"\n");
+            OutputDeviceWorker.getOutputDevice().createMessage("Elements with distance greater than input distance found" + count +"\n");
         } else
-            OutputDeviceWorker.getOutputDevice().sendMessage("Collection haven't got elements, cant count elements with distance greater than input distance \n");
+            OutputDeviceWorker.getOutputDevice().createMessage("Collection haven't got elements, cant count elements with distance greater than input distance \n");
     }
 
     /**
@@ -191,11 +195,13 @@ public class CollectionManagement {
             PriorityQueue<Route> pqCompareByDistance = new PriorityQueue<>(
                     Comparator.comparingDouble(Route::getDistance));
             pqCompareByDistance.addAll(collection);
+            StringBuilder stringBuilder = new StringBuilder();
             for (Route route : pqCompareByDistance) {
-                OutputDeviceWorker.getOutputDevice().sendDistance(route.getDistance());
-                OutputDeviceWorker.getOutputDevice().sendMessage("\n");
+                stringBuilder.append(route.getDistance());
+                stringBuilder.append("\n");
             }
-        } else OutputDeviceWorker.getOutputDevice().sendMessage("Collection is Empty, command can't be executed \n");
+            OutputDeviceWorker.getOutputDevice().createMessage(stringBuilder.toString());
+        } else OutputDeviceWorker.getOutputDevice().createMessage("Collection is Empty, command can't be executed \n");
     }
 
     /**
@@ -205,9 +211,9 @@ public class CollectionManagement {
         if (!JsonWorker.getJsonWorker().isIncorrectJsonFile()) {
             JsonWorker.getJsonWorker().serializeCollectionToFile(collection);
             if (!FileWorker.getFileWorker().isNotWorkedFile())
-                OutputDeviceWorker.getOutputDevice().sendMessage("Collection saved \n");
-            else OutputDeviceWorker.getOutputDevice().sendMessage("Collection can't be saved, incorrect file \n");
-        } else OutputDeviceWorker.getOutputDevice().sendMessage("Collection can't be saved, incorrect json format \n");
+                OutputDeviceWorker.getOutputDevice().createMessage("Collection saved \n");
+            else OutputDeviceWorker.getOutputDevice().createMessage("Collection can't be saved, incorrect file \n");
+        } else OutputDeviceWorker.getOutputDevice().createMessage("Collection can't be saved, incorrect json format \n");
     }
 
     /**
@@ -215,10 +221,30 @@ public class CollectionManagement {
      */
     public void show() {
         if (collection.size() != 0) {
+            StringBuilder stringBuilder = new StringBuilder();
             for (Route route : collection) {
-                OutputDeviceWorker.getOutputDevice().showRoute(route);
+                String message = '\n' +
+                        "Route Name: " + route.getName() + '\n' +
+                        "Id: " + route.getId() + '\n' +
+                        "Coordinates: " + '\n' +
+                        "\t x: " + route.getCoordinates().getX() + '\n' +
+                        "\t y: " + route.getCoordinates().getY() + '\n' +
+                        "CreationDate: " + route.getCreationDate() + '\n' +
+                        "LocationFrom: " + '\n' +
+                        "\t x: " + route.getFrom().getX() + '\n' +
+                        "\t y: " + route.getFrom().getY() + '\n' +
+                        "\t z: " + route.getFrom().getZ() + '\n' +
+                        "LocationTo: " + '\n' +
+                        "\t x: " + route.getTo().getX() + '\n' +
+                        "\t y: " + route.getTo().getY() + '\n' +
+                        "\t z: " + route.getTo().getZ() + '\n' +
+                        "\t name: " + route.getTo().getName() + '\n' +
+                        "Distance: " + route.getDistance() +'\n';
+                stringBuilder.append(message);
             }
-        } else OutputDeviceWorker.getOutputDevice().sendMessage("Collection is Empty + \n");
+            OutputDeviceWorker.getOutputDevice().createMessage(stringBuilder.toString());
+        } else OutputDeviceWorker.getOutputDevice().createMessage("Collection is Empty + \n");
+
     }
 }
 

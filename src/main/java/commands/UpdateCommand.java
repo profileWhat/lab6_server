@@ -1,8 +1,8 @@
 package commands;
 
+import collectionManagementModule.CoupleIdRoute;
 import serverManagementModule.OutputDeviceWorker;
 import collectionManagementModule.CollectionManagement;
-import collectionManagementModule.CoupleIdRoute;
 
 
 /**
@@ -39,7 +39,7 @@ public class UpdateCommand implements Command {
      */
     @Override
     public void describe() {
-        OutputDeviceWorker.getOutputDevice().sendMessage("The command for update Route");
+        OutputDeviceWorker.getOutputDevice().createMessage("The command for update Route");
     }
 
 }

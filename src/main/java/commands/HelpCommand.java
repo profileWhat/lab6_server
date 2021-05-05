@@ -34,7 +34,7 @@ public class HelpCommand implements Command {
      */
     @Override
     public void describe() {
-        OutputDeviceWorker.getOutputDevice().sendMessage("The command for get reference");
+        OutputDeviceWorker.getOutputDevice().createMessage("The command for get reference");
     }
 
 }

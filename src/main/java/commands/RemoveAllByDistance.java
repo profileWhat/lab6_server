@@ -36,7 +36,7 @@ public class RemoveAllByDistance implements Command {
      */
     @Override
     public void describe() {
-        OutputDeviceWorker.getOutputDevice().sendMessage("The command for remove all element by distance");
+        OutputDeviceWorker.getOutputDevice().createMessage("The command for remove all element by distance");
     }
 
 }

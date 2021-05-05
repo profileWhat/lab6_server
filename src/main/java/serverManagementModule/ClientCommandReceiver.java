@@ -1,8 +1,8 @@
 package serverManagementModule;
 
+import commands.ClientCommandName;
 import commands.Command;
 import commands.CommandName;
-import commands.ReceivedCommandName;
 
 import java.util.HashSet;
 
@@ -30,11 +30,13 @@ public class ClientCommandReceiver {
      * Method for execute Help command.
      */
     public void help() {
-        for (ReceivedCommandName receivedCommandName: ReceivedCommandName.values()) {
-            Command command = server.getCommandInvoker().getCommandMap().get(CommandName.valueOf(receivedCommandName.name()));
-            OutputDeviceWorker.getOutputDevice().sendMessage(receivedCommandName.toString().toLowerCase() + ": ");
+        for (ClientCommandName clientCommandName : ClientCommandName.values()) {
+            String message;
+            Command command = server.getCommandInvoker().getCommandMap().get(CommandName.valueOf(clientCommandName.name()));
+            message = clientCommandName.toString().toLowerCase() + ": ";
+            OutputDeviceWorker.getOutputDevice().createMessage(message);
             command.describe();
-            OutputDeviceWorker.getOutputDevice().sendMessage("\n");
+            OutputDeviceWorker.getOutputDevice().createMessage("\n");
         }
     }
 
@@ -43,17 +45,21 @@ public class ClientCommandReceiver {
      * @param fileName to start the script execution with the specified name
      */
     public void executeScript(String fileName) {
-        OutputDeviceWorker.getOutputDevice().sendMessage("the script execution has started \n");
+        OutputDeviceWorker.getOutputDevice().createMessage("the script execution has started \n");
         int fileNameSetSize = fileNameSet.size();
         this.fileNameSet.add(fileName);
-        if (fileNameSet.size() == fileNameSetSize) OutputDeviceWorker.getOutputDevice().sendEndOfScriptExFlag();
+        if (fileNameSet.size() == fileNameSetSize) {
+            String message = "Try to reuse script, executing script aborted";
+            OutputDeviceWorker.getOutputDevice().createMessage(message);
+            OutputDeviceWorker.getOutputDevice().setExecutingScriptFlag();
+        }
     }
 
     /**
      * Method for execute Exit Command.
      */
     public void exit() {
-        OutputDeviceWorker.getOutputDevice().sendMessage("The program finished \n");
+        OutputDeviceWorker.getOutputDevice().createMessage("The program finished \n");
     }
 
 
@@ -61,6 +67,6 @@ public class ClientCommandReceiver {
      * Method for describe not define commands
      */
     public void notDefine() {
-        OutputDeviceWorker.getOutputDevice().sendMessage("Undefined command can't be executed \n");
+        OutputDeviceWorker.getOutputDevice().createMessage("Undefined command can't be executed \n");
     }
 }

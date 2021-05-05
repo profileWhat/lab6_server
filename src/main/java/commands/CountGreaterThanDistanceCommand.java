@@ -37,7 +37,7 @@ public class CountGreaterThanDistanceCommand implements Command {
      */
     @Override
     public void describe() {
-        OutputDeviceWorker.getOutputDevice().sendMessage("The command for count element greater than input distance");
+        OutputDeviceWorker.getOutputDevice().createMessage("The command for count element greater than input distance");
     }
 
 }

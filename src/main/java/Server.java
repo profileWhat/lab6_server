@@ -24,6 +24,7 @@ public class Server {
             serverSocketChannel = ServerSocketChannel.open();
         } catch (IOException e) {
             OutputDeviceWorker.getOutputDevice().describeString("Server can't be opened");
+            return;
         }
         int port = choosePort(serverSocketChannel);
         OutputDeviceWorker.getOutputDevice().describeString("The server is running on the port: " + port);
@@ -31,7 +32,7 @@ public class Server {
         FileWorker.getFileWorker().setFileName(filePath);
         CollectionManagement collectionManagement = new CollectionManagement();
         collectionManagement.addRoutes(JsonWorker.getJsonWorker().deserializeToRouteArray());
-        ServerWorker serverWorker= new ServerWorker(serverSocketChannel.socket(), collectionManagement);
+        ServerWorker serverWorker= new ServerWorker(serverSocketChannel, collectionManagement);
         serverWorker.start();
     }
 

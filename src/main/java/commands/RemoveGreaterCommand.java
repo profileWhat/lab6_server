@@ -1,8 +1,8 @@
 package commands;
 
+import collectionManagementModule.Route;
 import serverManagementModule.OutputDeviceWorker;
 import collectionManagementModule.CollectionManagement;
-import collectionManagementModule.Route;
 
 /**
  * The command for remove all element Greater than current Route
@@ -37,7 +37,7 @@ public class RemoveGreaterCommand implements Command {
      */
     @Override
     public void describe() {
-        OutputDeviceWorker.getOutputDevice().sendMessage("The command for remove all element Greater current Route");
+        OutputDeviceWorker.getOutputDevice().createMessage("The command for remove all element Greater current Route");
     }
 
 }

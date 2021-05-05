@@ -1,3 +1,0 @@
-info
-execute_script Script1.txt
-execute_script Script2.txt

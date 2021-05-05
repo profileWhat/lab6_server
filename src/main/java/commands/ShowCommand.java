@@ -33,7 +33,7 @@ public class ShowCommand implements Command {
      */
     @Override
     public void describe() {
-        OutputDeviceWorker.getOutputDevice().sendMessage("The command for show elements of collection to file");
+        OutputDeviceWorker.getOutputDevice().createMessage("The command for show elements of collection to file");
     }
 
 }

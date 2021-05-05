@@ -33,7 +33,7 @@ public class ExitCommand implements Command {
      */
     @Override
     public void describe() {
-        OutputDeviceWorker.getOutputDevice().sendMessage("The command for exit complete the program");
+        OutputDeviceWorker.getOutputDevice().createMessage("The command for exit complete the program");
     }
 
 }

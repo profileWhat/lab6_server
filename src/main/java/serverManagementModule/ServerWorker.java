@@ -4,9 +4,15 @@ package serverManagementModule;
 import collectionManagementModule.*;
 import commands.*;
 
+import java.nio.channels.Selector;
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
+import java.util.Iterator;
+import java.util.Set;
+
+import static java.nio.channels.SelectionKey.*;
 
 /**
  * Class of working with the client
@@ -15,13 +21,13 @@ public class ServerWorker {
     private final CommandHandler commandHandler;
     private final CollectionManagement collectionManagement;
     private final CommandInvoker commandInvoker;
-    private final ServerSocket server;
+    private final ServerSocketChannel serverChannel;
     /**
      * Constructor of Client Worker. Load all param, init Client Command Receiver, Command Handler to work with input Command, Reader to read Values from file and register Command.
      * @param collectionManagement to load collection to Client Worker
      */
-    public ServerWorker(ServerSocket server, CollectionManagement collectionManagement) {
-        this.server = server;
+    public ServerWorker(ServerSocketChannel server, CollectionManagement collectionManagement) {
+        this.serverChannel = server;
         this.collectionManagement = collectionManagement;
         this.commandInvoker = new CommandInvoker();
         ClientCommandReceiver clientReceiver = new ClientCommandReceiver(this);
@@ -46,26 +52,63 @@ public class ServerWorker {
     }
 
     /**
-     * Method for start Client and programme. That method will working endless while server won't stop working
+     * Method for start Client and programme. That method will working endless while server won't stop working.
+     * That method work with Selector and polls all clients connected to the server.
      */
     public void start() {
-        AcceptingConnections acceptingConnections = new AcceptingConnections(server);
-        Socket client = acceptingConnections.connectAccept();
-        RequestReading requestReading = new RequestReading(client);
-        ReceivedCommand receivedCommand;
         try {
-            do {
-                receivedCommand = requestReading.readCommand();
-                commandHandler.execute(receivedCommand);
-            } while (receivedCommand.getCommandName() != CommandName.EXIT);
-            commandInvoker.execute(CommandName.SAVE, null);
-            OutputDeviceWorker.getOutputDevice().describeString("Completing the connection");
+            Selector sel = Selector.open();
+            serverChannel.configureBlocking(false);
+            serverChannel.register(sel, OP_ACCEPT);
+            while(true) {
+                int readyChannels = sel.selectNow();
+                if(readyChannels == 0) continue;
+                Set<SelectionKey> keys = sel.selectedKeys();
+                Iterator keyIterator = keys.iterator();
+                sel.select();
+                while (keyIterator.hasNext()) {
+                    SelectionKey currentKey = (SelectionKey) keyIterator.next();
+                    if (currentKey.isValid()) {
+                        if (currentKey.isAcceptable()) {
+                            ServerSocketChannel serverChannel = (ServerSocketChannel) currentKey.channel();
+                            AcceptingConnections acceptingConnections = new AcceptingConnections(serverChannel);
+                            SocketChannel socketChannel = acceptingConnections.connectAccept();
+                            socketChannel.configureBlocking(false);
+                            socketChannel.register(currentKey.selector(), OP_READ);
+                            keyIterator.remove();
+                        }
+                        if (currentKey.isReadable()) {
+                            try {
+                                SocketChannel socketChannel = (SocketChannel) currentKey.channel();
+                                RequestReading requestReading = new RequestReading(socketChannel);
+                                commandHandler.execute(requestReading.readCommand());
+                                socketChannel.configureBlocking(false);
+                                socketChannel.register(currentKey.selector(), OP_WRITE);
+                                keyIterator.remove();
+                            } catch (IOException e) {
+                                OutputDeviceWorker.getOutputDevice().describeString("Connection with " + ((SocketChannel) currentKey.channel()).getRemoteAddress() + " is broken");
+                                keyIterator.remove();
+                                currentKey.cancel();
+                                continue;
+                            }
+                        }
+                        if (currentKey.isWritable()) {
+                            SocketChannel socketChannel = (SocketChannel) currentKey.channel();
+                            keyIterator.remove();
+                            currentKey.cancel();
+                            socketChannel.configureBlocking(true);
+                            OutputDeviceWorker.getOutputDevice().setOutputStream(socketChannel.socket().getOutputStream());
+                            OutputDeviceWorker.getOutputDevice().sendMessage();
+                            socketChannel.configureBlocking(false);
+                            sel.selectNow();
+                            socketChannel.register(currentKey.selector(), OP_READ);
+                        }
+                    }
+                }
+            }
         } catch (IOException e) {
-            commandInvoker.execute(CommandName.SAVE, null);
-            OutputDeviceWorker.getOutputDevice().describeString("connection is broken");
-            start();
+           OutputDeviceWorker.getOutputDevice().describeString("connection is broken");
         }
-        start();
     }
 
 

@@ -37,7 +37,7 @@ public class ExecuteScriptCommand implements Command {
      */
     @Override
     public void describe() {
-        OutputDeviceWorker.getOutputDevice().sendMessage("The command for read and execute the script from the specified file");
+        OutputDeviceWorker.getOutputDevice().createMessage("The command for read and execute the script from the specified file");
     }
 
 }

@@ -29,7 +29,7 @@ public class UndefinedCommand implements Command{
      */
     @Override
     public void describe() {
-        OutputDeviceWorker.getOutputDevice().sendMessage("The command for describe undefined command");
+        OutputDeviceWorker.getOutputDevice().createMessage("The command for describe undefined command");
     }
 
 }

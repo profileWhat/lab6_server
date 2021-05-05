@@ -1,8 +1,9 @@
 package serverManagementModule;
 
-import collectionManagementModule.Route;
+import server_messages.ServerMessage;
 
 import java.io.*;
+import java.nio.ByteBuffer;
 
 /**
  * Class for working with the input device
@@ -10,8 +11,9 @@ import java.io.*;
 public class OutputDeviceWorker {
     private static OutputDeviceWorker describer;
     private OutputStream outputStream;
+    private ServerMessage serverMessage;
     private OutputDeviceWorker() {
-
+        this.serverMessage = new ServerMessage("");
     }
 
     public void setOutputStream(OutputStream out) {
@@ -42,23 +44,32 @@ public class OutputDeviceWorker {
      * Method for send message to client
      * @param message to sent to client
      */
-    public void sendMessage(String message) {
-        try {
-            outputStream.write(message.getBytes());
-        } catch (IOException e) {
-            System.out.println("Message can't be sent, haven't got connection");
-        }
+    public void createMessage(String message) {
+        String currentMessage = serverMessage.getMessage() +
+                message;
+        this.serverMessage = new ServerMessage(currentMessage);
     }
 
     /**
-     * Method for sent end fo script execution flag to client
+     * Method for send have already built serverMessage to client
      */
-    public void sendEndOfScriptExFlag() {
+    public void setExecutingScriptFlag() {
+        this.serverMessage.setEndOfScriptExFlag();
+    }
+
+    public void sendMessage() {
         try {
-            byte[] bytes = {1};
-            outputStream.write(bytes);
+            ByteBuffer buffer;
+            try(ByteArrayOutputStream byteArrayOStream = new ByteArrayOutputStream()) {
+                try (ObjectOutputStream out = new ObjectOutputStream(byteArrayOStream)) {
+                    out.writeObject(serverMessage);
+                    buffer = ByteBuffer.wrap(byteArrayOStream.toByteArray());
+                }
+            }
+            outputStream.write(buffer.array());
+            this.serverMessage = new ServerMessage("");
         } catch (IOException e) {
-            System.out.println("Message can't be sent, haven't got connection");
+            OutputDeviceWorker.getOutputDevice().describeString("Error sending the message");
         }
     }
     /**
@@ -69,63 +80,4 @@ public class OutputDeviceWorker {
         System.out.println(e.getMessage());
     }
 
-    /**
-     * Method to sent info about collection to client
-     *
-     * @param collectionClassName to describe collection class name
-     * @param creationDate        to describe collection date creation
-     * @param collectionSize      to describe collection size
-     */
-    public void describeCMInfo(String collectionClassName, java.util.Date creationDate, int collectionSize) {
-        String message =
-                "Type of collection: " + collectionClassName + '\n' +
-                        "Date of creation: " + creationDate + '\n' +
-                        "Size of collection: " + collectionSize + '\n';
-        try {
-            outputStream.write(message.getBytes());
-        } catch (IOException e) {
-            System.out.println("Message can't be sent, haven't got connection");
-        }
-    }
-
-    /**
-     * Method for send message about distance to client
-     * @param distance to send Distance
-     */
-    public void sendDistance(Double distance) {
-        try {
-            outputStream.write(distance.toString().getBytes());
-        } catch (IOException e) {
-            System.out.println("Message can't be sent, haven't got connection");
-        }
-    }
-
-    /**
-     * Method for send information about Routes to client
-     * @param route to show it
-     */
-    public void showRoute(Route route) {
-        String message = '\n' +
-                "Route Name: " + route.getName() + '\n' +
-                        "Id: " + route.getId() + '\n' +
-                        "Coordinates: " + '\n' +
-                        "\t x: " + route.getCoordinates().getX() + '\n' +
-                        "\t y: " + route.getCoordinates().getY() + '\n' +
-                        "CreationDate: " + route.getCreationDate() + '\n' +
-                        "LocationFrom: " + '\n' +
-                        "\t x: " + route.getFrom().getX() + '\n' +
-                        "\t y: " + route.getFrom().getY() + '\n' +
-                        "\t z: " + route.getFrom().getZ() + '\n' +
-                        "LocationTo: " + '\n' +
-                        "\t x: " + route.getTo().getX() + '\n' +
-                        "\t y: " + route.getTo().getY() + '\n' +
-                        "\t z: " + route.getTo().getZ() + '\n' +
-                        "\t name: " + route.getTo().getName() + '\n' +
-                        "Distance: " + route.getDistance() +'\n';
-        try {
-            outputStream.write(message.getBytes());
-        } catch (IOException e) {
-            System.out.println("Message can't be sent, haven't got connection");
-        }
-    }
 }

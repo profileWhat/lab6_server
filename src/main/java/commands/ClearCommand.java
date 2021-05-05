@@ -33,7 +33,7 @@ public class ClearCommand implements Command {
      */
     @Override
     public void describe() {
-        OutputDeviceWorker.getOutputDevice().sendMessage("The command for remove all element of collection");
+        OutputDeviceWorker.getOutputDevice().createMessage("The command for remove all element of collection");
     }
 
 }

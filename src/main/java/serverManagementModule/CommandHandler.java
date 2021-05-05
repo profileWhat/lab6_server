@@ -1,7 +1,8 @@
 package serverManagementModule;
 
-import commands.ReceivedCommand;
 
+import commands.ClientCommand;
+import commands.CommandName;
 
 /**
  * Class for processing input commands
@@ -20,10 +21,11 @@ public class CommandHandler {
 
     /**
      * Method for execute command by command type
-     * @param receivedCommand to get received command type
+     * @param clientCommand to get received command type
      */
-    public void execute(ReceivedCommand receivedCommand)  {
-        commandInvoker.execute(receivedCommand.getCommandName(), receivedCommand.getArgument());
+    public void execute(ClientCommand clientCommand)  {
+        CommandName commandName = CommandName.valueOf(clientCommand.getCommandName().toString());
+        commandInvoker.execute(commandName, clientCommand.getArgument());
     }
 
 }

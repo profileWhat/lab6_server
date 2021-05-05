@@ -56,7 +56,7 @@ public class JsonWorker {
             routes = gson.fromJson(json, Route[].class);
         } catch (JsonSyntaxException e) {
             IsIncorrectJsonFile = true;
-            OutputDeviceWorker.getOutputDevice().sendMessage("The json file is not working properly, now you are working with an empty collection");
+            OutputDeviceWorker.getOutputDevice().createMessage("The json file is not working properly, now you are working with an empty collection");
         }
         return routes;
     }

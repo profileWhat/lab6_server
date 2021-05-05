@@ -36,7 +36,7 @@ public class FileWorker {
             this.fileName = fileName;
             if (fileName.contains("\\dev\\") || fileName.contains("/dev/")) {
                 isNotWorkedFile = true;
-                OutputDeviceWorker.getOutputDevice().sendMessage("Incorrect File, collection will not be load");
+                OutputDeviceWorker.getOutputDevice().createMessage("Incorrect File, collection will not be load");
             }
         } catch (NullPointerException e) {
             isNotWorkedFile = true;

@@ -1,12 +1,11 @@
 package serverManagementModule;
 
 
-import commands.ReceivedCommand;
+import commands.ClientCommand;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
 
@@ -14,14 +13,14 @@ import java.nio.channels.SocketChannel;
  * Class for reading request from client
  */
 public class RequestReading {
-    private final Socket client;
+    private final SocketChannel clientChannel;
 
     /**
      * Constructor for set socket client
-     * @param client to set it
+     * @param clientChannel to set it
      */
-    public RequestReading(Socket client) {
-        this.client = client;
+    public RequestReading(SocketChannel clientChannel) {
+        this.clientChannel = clientChannel;
     }
 
     /**
@@ -29,18 +28,17 @@ public class RequestReading {
      * @return received command
      * @throws IOException if connection has been broken
      */
-    public ReceivedCommand readCommand() throws IOException{
-        ReceivedCommand receivedCommand = null;
-        SocketChannel clientSocketChannel = client.getChannel();
-        byte[] bytes = new byte[2048];
+    public ClientCommand readCommand() throws IOException{
+        ClientCommand clientCommand = null;
+        byte[] bytes = new byte[1024];
         ByteBuffer buffer = ByteBuffer.wrap(bytes);
-        clientSocketChannel.read(buffer);
+        clientChannel.read(buffer);
         try (ByteArrayInputStream bis = new ByteArrayInputStream(buffer.array());
              ObjectInputStream in = new ObjectInputStream(bis)) {
-            receivedCommand = (ReceivedCommand)in.readObject();
+            clientCommand = (ClientCommand)in.readObject();
         } catch (IOException | ClassNotFoundException e) {
             OutputDeviceWorker.getOutputDevice().describeException(e);
         }
-        return receivedCommand;
+        return clientCommand;
     }
 }
