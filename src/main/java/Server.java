@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.channels.ServerSocketChannel;
-import java.util.Random;
 
 
 /**
@@ -19,7 +18,7 @@ public class Server {
      * @param args to set args
      */
     static public void main(String[] args) {
-        ServerSocketChannel serverSocketChannel = null;
+        ServerSocketChannel serverSocketChannel;
         try {
             serverSocketChannel = ServerSocketChannel.open();
         } catch (IOException e) {
@@ -27,7 +26,7 @@ public class Server {
             return;
         }
         int port = choosePort(serverSocketChannel);
-        OutputDeviceWorker.getOutputDevice().describeString("The server is running on the port: " + port);
+        OutputDeviceWorker.getOutputDevice().describeString("The server is running on the address: " + serverSocketChannel.socket().getInetAddress() + ":" + port);
         String filePath = System.getenv("INPUT_FILE_PATH");
         FileWorker.getFileWorker().setFileName(filePath);
         CollectionManagement collectionManagement = new CollectionManagement();
@@ -37,7 +36,7 @@ public class Server {
     }
 
     private static int choosePort(ServerSocketChannel serverSocketChannel) {
-        int port = new Random().nextInt(65535);
+        int port = 1221;
         SocketAddress socketAddr = new InetSocketAddress("localhost", port);
         try {
             serverSocketChannel.bind(socketAddr);

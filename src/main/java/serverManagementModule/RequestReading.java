@@ -14,7 +14,6 @@ import java.nio.channels.SocketChannel;
  */
 public class RequestReading {
     private final SocketChannel clientChannel;
-
     /**
      * Constructor for set socket client
      * @param clientChannel to set it
@@ -36,9 +35,10 @@ public class RequestReading {
         try (ByteArrayInputStream bis = new ByteArrayInputStream(buffer.array());
              ObjectInputStream in = new ObjectInputStream(bis)) {
             clientCommand = (ClientCommand)in.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            OutputDeviceWorker.getOutputDevice().describeException(e);
+        } catch (ClassNotFoundException e) {
+            OutputDeviceWorker.getOutputDevice().describeString("Unable to read the command");
         }
         return clientCommand;
     }
+
 }

@@ -28,7 +28,7 @@ public class AcceptingConnections {
             client = server.accept();
             OutputDeviceWorker.getOutputDevice().describeString("Connection established with " + client.socket().getRemoteSocketAddress());
         } catch (IOException e) {
-            OutputDeviceWorker.getOutputDevice().describeException(e);
+            OutputDeviceWorker.getOutputDevice().describeString("Unable to connect with client");
         }
         return client;
     }
