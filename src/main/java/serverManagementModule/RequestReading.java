@@ -29,7 +29,7 @@ public class RequestReading {
      */
     public ClientCommand readCommand() throws IOException{
         ClientCommand clientCommand = null;
-        byte[] bytes = new byte[1024];
+        byte[] bytes = new byte[32757];
         ByteBuffer buffer = ByteBuffer.wrap(bytes);
         clientChannel.read(buffer);
         try (ByteArrayInputStream bis = new ByteArrayInputStream(buffer.array());
