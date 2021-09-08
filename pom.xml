@@ -31,8 +31,6 @@
             <groupId>org.example</groupId>
             <artifactId>commons</artifactId>
             <version>1.0</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/resources/commons-1.0.jar</systemPath>
         </dependency>
 
         <dependency>

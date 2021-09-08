@@ -1,13 +1,11 @@
 package data_base;
 
+import data_base.db_url.DBurl;
 import server_management_module.OutputDeviceWorker;
 
 import java.sql.*;
 
 public class DatabaseCommunicator {
-    private static final String DB_URL = "jdbc:postgresql://localhost:5432/routes";
-    private static final String USER = "postgres";
-    private static final String PASS = "7ppgd877";
     private boolean isWorkingDB = false;
     private Connection connection;
     private Statement statement;
@@ -23,7 +21,7 @@ public class DatabaseCommunicator {
 
     public void connect() {
         try {
-            connection = DriverManager.getConnection(DB_URL, USER, PASS);
+            connection = DriverManager.getConnection(DBurl.getDbUrl(), DBurl.getUSER(), DBurl.getPASS());
             statement = connection.createStatement();
             isWorkingDB = true;
         } catch (SQLException e) {
