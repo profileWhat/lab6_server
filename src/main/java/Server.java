@@ -45,7 +45,8 @@ public class Server {
                 adapterToLoginCollection.adapt();
                 adapterToRouteCollection.adapt();
             } catch (SQLException e) {
-                e.printStackTrace();
+                OutputDeviceWorker.getOutputDevice().describeString("adapting the database to the collection does not work, check that the database is correct");
+                DatabaseCommunicator.getDatabaseCommunicator().setWorkingDB(false);
             }
         }
         ServerWorker serverWorker= new ServerWorker(serverSocketChannel, routeCollectionManagement, loginCollectionManagement);

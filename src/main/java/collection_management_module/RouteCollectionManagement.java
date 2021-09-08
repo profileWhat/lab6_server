@@ -52,7 +52,6 @@ public class RouteCollectionManagement {
                 collection.add(route);
                 OutputDeviceWorker.getOutputDevice().createMessage("Route added \n");
             } catch (SQLException e) {
-                e.printStackTrace();
                 OutputDeviceWorker.getOutputDevice().createMessage("Route have not added");
             }
         }
@@ -76,7 +75,7 @@ public class RouteCollectionManagement {
                     OutputDeviceWorker.getOutputDevice().createMessage("Route updated \n");
                     break;
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    OutputDeviceWorker.getOutputDevice().describeString("Route can't update");
                 }
             }
         }
@@ -105,7 +104,6 @@ public class RouteCollectionManagement {
                 dbWorker.removeById(id);
                 OutputDeviceWorker.getOutputDevice().createMessage("Route by id deleted \n");
             } catch (SQLException e) {
-                e.printStackTrace();
                 OutputDeviceWorker.getOutputDevice().createMessage("Route can't be deleted \n");
             }
         } else OutputDeviceWorker.getOutputDevice().createMessage("Route by id not found, it can't be deleted or you don't have enough rights to modify the route\n");
@@ -121,7 +119,7 @@ public class RouteCollectionManagement {
                 try {
                     dbWorker.removeById(route.getId());
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    OutputDeviceWorker.getOutputDevice().describeString("Routes can't be cleared");
                     break;
                 }
             }
@@ -144,7 +142,7 @@ public class RouteCollectionManagement {
                     executedFlag = true;
                     break;
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    OutputDeviceWorker.getOutputDevice().describeString("Route can't be removed");
                 }
             }
         }
@@ -162,7 +160,7 @@ public class RouteCollectionManagement {
                 try {
                     dbWorker.removeById(route.getId());
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    OutputDeviceWorker.getOutputDevice().describeString("Route can't be removed");
                 }
             }
         }
@@ -186,7 +184,7 @@ public class RouteCollectionManagement {
                 try {
                     dbWorker.removeById(route.getId());
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    OutputDeviceWorker.getOutputDevice().describeString("Route can't be removed");
                 }
             }
         }
@@ -210,7 +208,7 @@ public class RouteCollectionManagement {
                 try {
                     dbWorker.removeById(route.getId());
                 } catch (SQLException e) {
-                    e.printStackTrace();
+                    OutputDeviceWorker.getOutputDevice().describeString("Route can't be removed");
                 }
             }
         }

@@ -3,6 +3,7 @@ package server_management_module;
 
 import collection_management_module.*;
 import commands.*;
+import data_base.DatabaseCommunicator;
 import server_management_module.server_request_reading.ReadingRequestManager;
 
 import java.io.IOException;
@@ -67,7 +68,7 @@ public class ServerWorker {
         Callable<SocketChannel> acceptingConnectionTask = AC::connectAccept;
         Runnable serverInteraction = () -> {
             Scanner scanner = new Scanner(System.in);
-            while(!exitServerFlag) {
+            while(!exitServerFlag && DatabaseCommunicator.getDatabaseCommunicator().isWorkingDB()) {
                 String string = scanner.next();
                 try {
                     serverCommandInvoker.execute(CommandName.valueOf(ServerCommandName.valueOf(string.toUpperCase()).toString()), null);
@@ -77,7 +78,7 @@ public class ServerWorker {
             }
         };
         new Thread(serverInteraction).start();
-        while (!exitServerFlag) {
+        while (!exitServerFlag && DatabaseCommunicator.getDatabaseCommunicator().isWorkingDB()) {
             try {
                 SocketChannel client = acceptingConnectionService.submit(acceptingConnectionTask).get();
                 clientNumber.incrementAndGet();
