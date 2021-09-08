@@ -20,5 +20,8 @@ public enum CommandName {
     SHOW,
     UPDATE,
     SAVE,
-    UNDEFINED
+    UNDEFINED,
+    SERVER_EXIT,
+    SERVER_SHOW_NUMBERS_SIZE,
+    SERVER_HELP
 }

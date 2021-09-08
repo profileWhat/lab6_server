@@ -1,4 +1,4 @@
-package serverManagementModule;
+package server_management_module;
 
 import commands.ClientCommandName;
 import commands.Command;
@@ -54,6 +54,7 @@ public class ClientCommandReceiver {
             OutputDeviceWorker.getOutputDevice().createMessage(message);
             OutputDeviceWorker.getOutputDevice().setExecutingScriptFlag();
         }
+        fileNameSet.clear();
     }
 
     /**

@@ -4,8 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.example</groupId>
-    <artifactId>Lab6Server</artifactId>
+    <artifactId>Server</artifactId>
     <version>1.0</version>
+
+    <parent>
+        <groupId>ru.pluggable.main</groupId>
+        <artifactId>pluggable</artifactId>
+        <version>1.0.0</version>
+    </parent>
 
     <dependencies>
         <dependency>
@@ -25,9 +31,17 @@
             <groupId>org.example</groupId>
             <artifactId>commons</artifactId>
             <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/commons-1.0.jar</systemPath>
         </dependency>
 
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.2.23</version>
+        </dependency>
     </dependencies>
+
 
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>

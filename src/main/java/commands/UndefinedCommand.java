@@ -1,7 +1,7 @@
 package commands;
 
-import serverManagementModule.ClientCommandReceiver;
-import serverManagementModule.OutputDeviceWorker;
+import server_management_module.ClientCommandReceiver;
+import server_management_module.OutputDeviceWorker;
 
 public class UndefinedCommand implements Command{
     private final ClientCommandReceiver cr;

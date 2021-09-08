@@ -1,21 +1,21 @@
 package commands;
 
-import collectionManagementModule.Route;
-import serverManagementModule.OutputDeviceWorker;
-import collectionManagementModule.CollectionManagement;
+import collection_management_module.Route;
+import server_management_module.OutputDeviceWorker;
+import collection_management_module.RouteCollectionManagement;
 
 /**
  * Command for remove all element Lower than current Route
  */
 public class RemoveLowerCommand implements Command {
-    private final CollectionManagement cm;
+    private final RouteCollectionManagement cm;
 
     /**
      * Constructor for load fields
      *
      * @param cm for load to command
      */
-    public RemoveLowerCommand(CollectionManagement cm) {
+    public RemoveLowerCommand(RouteCollectionManagement cm) {
         this.cm = cm;
     }
 

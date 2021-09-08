@@ -1,0 +1,1 @@
+mvn install: install-file -Dfile=C:\ИТМО\Программирование\lab6\lab6_server\src\main\resources\commons-1.0.jar -DgroupId=org.example -DartifactId=org.example.commons -Dversion=1.0 -Dpqckaging=jar

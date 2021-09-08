@@ -1,20 +1,20 @@
 package commands;
 
-import serverManagementModule.OutputDeviceWorker;
-import collectionManagementModule.CollectionManagement;
+import server_management_module.OutputDeviceWorker;
+import collection_management_module.RouteCollectionManagement;
 
 /**
  * The command for remove all element by distance
  */
 public class RemoveAllByDistance implements Command {
-    private final CollectionManagement cm;
+    private final RouteCollectionManagement cm;
 
     /**
      * Constructor for load fields
      *
      * @param cm for load to command
      */
-    public RemoveAllByDistance(CollectionManagement cm) {
+    public RemoveAllByDistance(RouteCollectionManagement cm) {
         this.cm = cm;
     }
 

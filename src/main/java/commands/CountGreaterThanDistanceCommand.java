@@ -1,21 +1,21 @@
 package commands;
 
-import serverManagementModule.OutputDeviceWorker;
-import collectionManagementModule.CollectionManagement;
+import server_management_module.OutputDeviceWorker;
+import collection_management_module.RouteCollectionManagement;
 
 /**
  * The command for count element witch have distance greater than input distance
  */
 
 public class CountGreaterThanDistanceCommand implements Command {
-    private final CollectionManagement cm;
+    private final RouteCollectionManagement cm;
 
     /**
      * Constructor for load fields
      *
      * @param cm for load to command
      */
-    public CountGreaterThanDistanceCommand(CollectionManagement cm) {
+    public CountGreaterThanDistanceCommand(RouteCollectionManagement cm) {
         this.cm = cm;
     }
 

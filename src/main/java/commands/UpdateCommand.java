@@ -1,8 +1,8 @@
 package commands;
 
-import collectionManagementModule.CoupleIdRoute;
-import serverManagementModule.OutputDeviceWorker;
-import collectionManagementModule.CollectionManagement;
+import collection_management_module.CoupleIdRoute;
+import server_management_module.OutputDeviceWorker;
+import collection_management_module.RouteCollectionManagement;
 
 
 /**
@@ -10,14 +10,14 @@ import collectionManagementModule.CollectionManagement;
  */
 
 public class UpdateCommand implements Command {
-    private final CollectionManagement cm;
+    private final RouteCollectionManagement cm;
 
     /**
      * Constructor for load fields
      *
      * @param cm for load to command
      */
-    public UpdateCommand(CollectionManagement cm) {
+    public UpdateCommand(RouteCollectionManagement cm) {
         this.cm = cm;
     }
 

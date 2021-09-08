@@ -1,12 +1,17 @@
-import collectionManagementModule.CollectionManagement;
-import fileManagementModule.FileWorker;
-import fileManagementModule.JsonWorker;
-import serverManagementModule.*;
+import collection_management_module.LoginCollectionManagement;
+import collection_management_module.RouteCollectionManagement;
+import data_base.AdapterToCollection.AdapterToLoginCollection;
+import data_base.AdapterToCollection.AdapterToRouteCollection;
+import data_base.DBWorker;
+import data_base.DatabaseCommunicator;
+import server_management_module.*;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.channels.ServerSocketChannel;
+import java.sql.SQLException;
+import java.util.Random;
 
 
 /**
@@ -18,30 +23,41 @@ public class Server {
      * @param args to set args
      */
     static public void main(String[] args) {
-        ServerSocketChannel serverSocketChannel;
+       ServerSocketChannel serverSocketChannel;
         try {
             serverSocketChannel = ServerSocketChannel.open();
         } catch (IOException e) {
             OutputDeviceWorker.getOutputDevice().describeString("Server can't be opened");
             return;
         }
-        int port = choosePort(serverSocketChannel);
+        int port = choosePort(serverSocketChannel, 1221);
         OutputDeviceWorker.getOutputDevice().describeString("The server is running on the address: " + serverSocketChannel.socket().getInetAddress() + ":" + port);
-        String filePath = System.getenv("INPUT_FILE_PATH");
-        FileWorker.getFileWorker().setFileName(filePath);
-        CollectionManagement collectionManagement = new CollectionManagement();
-        collectionManagement.addRoutes(JsonWorker.getJsonWorker().deserializeToRouteArray());
-        ServerWorker serverWorker= new ServerWorker(serverSocketChannel, collectionManagement);
-        serverWorker.start();
+        DatabaseCommunicator DBc = DatabaseCommunicator.getDatabaseCommunicator();
+        DBc.connect();
+        LoginCollectionManagement loginCollectionManagement = new LoginCollectionManagement();
+        RouteCollectionManagement routeCollectionManagement = new RouteCollectionManagement(new DBWorker(loginCollectionManagement));
+        AdapterToLoginCollection adapterToLoginCollection = new AdapterToLoginCollection(
+                DatabaseCommunicator.getDatabaseCommunicator().getStatement(), loginCollectionManagement);
+        AdapterToRouteCollection adapterToRouteCollection = new AdapterToRouteCollection(
+                DatabaseCommunicator.getDatabaseCommunicator().getStatement(), routeCollectionManagement);
+        if (DBc.isWorkingDB()) {
+            try {
+                adapterToLoginCollection.adapt();
+                adapterToRouteCollection.adapt();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        ServerWorker serverWorker= new ServerWorker(serverSocketChannel, routeCollectionManagement, loginCollectionManagement);
+        serverWorker.startWithThread();
     }
 
-    private static int choosePort(ServerSocketChannel serverSocketChannel) {
-        int port = 1221;
+    private static int choosePort(ServerSocketChannel serverSocketChannel, int port) {
         SocketAddress socketAddr = new InetSocketAddress("localhost", port);
         try {
             serverSocketChannel.bind(socketAddr);
         } catch (IOException e) {
-            choosePort(serverSocketChannel);
+            choosePort(serverSocketChannel, new Random().nextInt(65536));
         }
         return port;
     }

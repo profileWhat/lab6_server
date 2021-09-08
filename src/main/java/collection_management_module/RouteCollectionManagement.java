@@ -1,10 +1,10 @@
-package collectionManagementModule;
+package collection_management_module;
 
+import java.sql.SQLException;
 import java.util.*;
 
-import serverManagementModule.OutputDeviceWorker;
-import fileManagementModule.FileWorker;
-import fileManagementModule.JsonWorker;
+import data_base.DBWorker;
+import server_management_module.OutputDeviceWorker;
 
 /**
  * This class have a part of Receiver class
@@ -12,50 +12,30 @@ import fileManagementModule.JsonWorker;
  * Class for working with a collection
  */
 
-public class CollectionManagement {
+public class RouteCollectionManagement {
     private final PriorityQueue<Route> collection;
-    private final HashSet<Long> hashSet;
     private final Date creationDate;
-
-
-    /**
-     * Method for get Random Id for route
-     *
-     * @return random long
-     */
-    private long getRandomId() {
-        int previousSetSize = hashSet.size();
-        long currentRandomId = Math.abs(new Random().nextLong());
-        while (previousSetSize == hashSet.size()) {
-            hashSet.add(currentRandomId);
-            currentRandomId = Math.abs(new Random().nextLong());
-        }
-        return currentRandomId;
-    }
-
+    private final DBWorker dbWorker;
+    private String userName;
     /**
      * Constructor for init collection, creation date, hash set of id routes.
      */
-    public CollectionManagement() {
+    public RouteCollectionManagement(DBWorker dbWorker) {
         this.collection = new PriorityQueue<>(
                 Comparator.comparingInt(route -> route.getId().intValue()));
         this.creationDate = new Date();
-        this.hashSet = new HashSet<>();
+        this.dbWorker = dbWorker;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     /**
      * Method for add routes
-     *
-     * @param routes for add it
      */
-    public void addRoutes(Route[] routes) {
-        if (routes != null) {
-            for (Route route : routes) {
-                route.setCreationDate();
-                route.setId(getRandomId());
-                collection.add(route);
-            }
-        }
+    public void addRoute(Route route) {
+        collection.add(route);
     }
 
     /**
@@ -64,9 +44,18 @@ public class CollectionManagement {
      * @param route for add it
      */
     public void add(Route route) {
-        route.setId(getRandomId());
-        collection.add(route);
-        OutputDeviceWorker.getOutputDevice().createMessage("Route added \n");
+        if (route.getDistance() < 1) {
+            OutputDeviceWorker.getOutputDevice().createMessage("The route distance is less than 1, the route cannot be added");
+        } else {
+            try {
+                dbWorker.addRouteWithId(route);
+                collection.add(route);
+                OutputDeviceWorker.getOutputDevice().createMessage("Route added \n");
+            } catch (SQLException e) {
+                e.printStackTrace();
+                OutputDeviceWorker.getOutputDevice().createMessage("Route have not added");
+            }
+        }
     }
 
     /**
@@ -75,12 +64,23 @@ public class CollectionManagement {
      * @param coupleIdRoute for update by Id and input Route
      */
     public void update(CoupleIdRoute coupleIdRoute) {
-        PriorityQueue<Route> newCollection = collection;
-        if (newCollection.removeIf(route -> (coupleIdRoute.getId().equals(route.getId())))) {
-            coupleIdRoute.getRoute().setId(coupleIdRoute.getId());
-            newCollection.add(coupleIdRoute.getRoute());
-            OutputDeviceWorker.getOutputDevice().createMessage("Route updated \n");
-        } else OutputDeviceWorker.getOutputDevice().createMessage("Collection haven't got element with input id \n");
+        boolean executedFlag = false;
+        for (Route route: collection) {
+            if (route.getId().equals(coupleIdRoute.getId()) && userName.equals(route.getRouteCreator())) {
+                coupleIdRoute.getRoute().setId(coupleIdRoute.getId());
+                try {
+                    dbWorker.updateRoute(coupleIdRoute.getRoute());
+                    collection.remove(route);
+                    collection.add(coupleIdRoute.getRoute());
+                    executedFlag = true;
+                    OutputDeviceWorker.getOutputDevice().createMessage("Route updated \n");
+                    break;
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        if (!executedFlag) OutputDeviceWorker.getOutputDevice().createMessage("Collection haven't got element with input id or you don't have enough rights to modify the route\n");
     }
 
     /**
@@ -100,9 +100,15 @@ public class CollectionManagement {
      * @param id for remove route by it
      */
     public void removeById(Long id) {
-        if (collection.removeIf(route -> (id.equals(route.getId())))) {
-            OutputDeviceWorker.getOutputDevice().createMessage("Route by id deleted \n");
-        } else OutputDeviceWorker.getOutputDevice().createMessage("Route by id not found, it can't be deleted \n");
+        if (collection.removeIf(route -> (id.equals(route.getId()) && userName.equals(route.getRouteCreator())))) {
+            try {
+                dbWorker.removeById(id);
+                OutputDeviceWorker.getOutputDevice().createMessage("Route by id deleted \n");
+            } catch (SQLException e) {
+                e.printStackTrace();
+                OutputDeviceWorker.getOutputDevice().createMessage("Route can't be deleted \n");
+            }
+        } else OutputDeviceWorker.getOutputDevice().createMessage("Route by id not found, it can't be deleted or you don't have enough rights to modify the route\n");
 
     }
 
@@ -110,19 +116,39 @@ public class CollectionManagement {
      * Method for clear collection
      */
     public void clear() {
-        collection.clear();
-        OutputDeviceWorker.getOutputDevice().createMessage("Collection cleared \n");
+        for (Route route:collection) {
+            if (userName.equals(route.getRouteCreator())) {
+                try {
+                    dbWorker.removeById(route.getId());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    break;
+                }
+            }
+        }
+        collection.removeIf(route -> (userName.equals(route.getRouteCreator())));
+        OutputDeviceWorker.getOutputDevice().createMessage("All routes created by you have been deleted\n");
     }
 
     /**
      * Method for remove first route of collection
      */
     public void removeFirst() {
-        if (collection.size() != 0) {
-            collection.poll();
-            OutputDeviceWorker.getOutputDevice().createMessage("Removed first element \n");
-        } else
-            OutputDeviceWorker.getOutputDevice().createMessage("Collection haven't got elements, cant remove first element \n");
+        boolean executedFlag = false;
+        for (Route route:collection) {
+            if (userName.equals(route.getRouteCreator())) {
+                try {
+                    dbWorker.removeById(route.getId());
+                    collection.remove(route);
+                    OutputDeviceWorker.getOutputDevice().createMessage("The first element you entered has been deleted \n");
+                    executedFlag = true;
+                    break;
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        if (!executedFlag) OutputDeviceWorker.getOutputDevice().createMessage("The elements you entered do not exist in the collection \n");
     }
 
     /**
@@ -131,8 +157,17 @@ public class CollectionManagement {
      * @param currentRoute for delete routes lower than it
      */
     public void removeGreater(Route currentRoute) {
+        for(Route route: collection) {
+            if (route.getDistance() < currentRoute.getDistance() && userName.equals(route.getRouteCreator())) {
+                try {
+                    dbWorker.removeById(route.getId());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         if (collection.size() != 0) {
-            if (collection.removeIf(route -> (currentRoute.getDistance() < route.getDistance()))) {
+            if (collection.removeIf(route -> (currentRoute.getDistance() < route.getDistance() && userName.equals(route.getRouteCreator())))) {
                 OutputDeviceWorker.getOutputDevice().createMessage("Remove all element greater than input element \n");
             } else
                 OutputDeviceWorker.getOutputDevice().createMessage("Input route so small, elements of collection weren't deleted \n");
@@ -146,6 +181,15 @@ public class CollectionManagement {
      * @param currentRoute for delete routes greater than it
      */
     public void removeLower(Route currentRoute) {
+        for(Route route: collection) {
+            if (route.getDistance() > currentRoute.getDistance() && userName.equals(route.getRouteCreator())) {
+                try {
+                    dbWorker.removeById(route.getId());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         if (collection.size() != 0) {
             if (collection.removeIf(route -> (currentRoute.getDistance() > route.getDistance())))
                 OutputDeviceWorker.getOutputDevice().createMessage("Remove all element lower than input element \n");
@@ -161,6 +205,15 @@ public class CollectionManagement {
      * @param currentDistance for delete routes by it
      */
     public void removeAllByDistance(Double currentDistance) {
+        for(Route route: collection) {
+            if (route.getDistance().equals(currentDistance) && userName.equals(route.getRouteCreator())) {
+                try {
+                    dbWorker.removeById(route.getId());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         if (collection.size() != 0) {
             if (collection.removeIf(route -> (currentDistance == route.getDistance().doubleValue())))
                 OutputDeviceWorker.getOutputDevice().createMessage("Remove all element equal by distance \n");
@@ -204,17 +257,6 @@ public class CollectionManagement {
         } else OutputDeviceWorker.getOutputDevice().createMessage("Collection is Empty, command can't be executed \n");
     }
 
-    /**
-     * Method for save collection to file
-     */
-    public void save() {
-        if (!JsonWorker.getJsonWorker().isIncorrectJsonFile()) {
-            JsonWorker.getJsonWorker().serializeCollectionToFile(collection);
-            if (!FileWorker.getFileWorker().isNotWorkedFile())
-                OutputDeviceWorker.getOutputDevice().createMessage("Collection saved \n");
-            else OutputDeviceWorker.getOutputDevice().createMessage("Collection can't be saved, incorrect file \n");
-        } else OutputDeviceWorker.getOutputDevice().createMessage("Collection can't be saved, incorrect json format \n");
-    }
 
     /**
      * Method to show routes
@@ -239,7 +281,8 @@ public class CollectionManagement {
                         "\t y: " + route.getTo().getY() + '\n' +
                         "\t z: " + route.getTo().getZ() + '\n' +
                         "\t name: " + route.getTo().getName() + '\n' +
-                        "Distance: " + route.getDistance() +'\n';
+                        "Distance: " + route.getDistance() +'\n' +
+                        "RouteCreator: " + route.getRouteCreator() + '\n';
                 stringBuilder.append(message);
             }
             OutputDeviceWorker.getOutputDevice().createMessage(stringBuilder.toString());

@@ -1,4 +1,4 @@
-package serverManagementModule;
+package server_management_module;
 
 import java.util.HashMap;
 

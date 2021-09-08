@@ -1,9 +1,10 @@
-package serverManagementModule;
+package server_management_module;
 
 import server_messages.ServerMessage;
 
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.nio.channels.SocketChannel;
 
 /**
  * Class for working with the input device
@@ -57,6 +58,14 @@ public class OutputDeviceWorker {
         this.serverMessage.setEndOfScriptExFlag();
     }
 
+    public void setEndOfClientFlag() {
+        this.serverMessage.setEndOfClientFlag();
+    }
+
+    public void setLoggedUserFlag() {
+        this.serverMessage.setLoggedUSer();
+    }
+
     public void sendMessage() {
         try {
             ByteBuffer buffer;
@@ -67,6 +76,22 @@ public class OutputDeviceWorker {
                 }
             }
             outputStream.write(buffer.array());
+            this.serverMessage = new ServerMessage("");
+        } catch (IOException e) {
+            OutputDeviceWorker.getOutputDevice().describeString("Error sending the message");
+        }
+    }
+
+    public void sendMessage(SocketChannel socketChannel) {
+        try {
+            ByteBuffer buffer;
+            try(ByteArrayOutputStream byteArrayOStream = new ByteArrayOutputStream()) {
+                try (ObjectOutputStream out = new ObjectOutputStream(byteArrayOStream)) {
+                    out.writeObject(serverMessage);
+                    buffer = ByteBuffer.wrap(byteArrayOStream.toByteArray());
+                }
+            }
+            socketChannel.write(buffer);
             this.serverMessage = new ServerMessage("");
         } catch (IOException e) {
             OutputDeviceWorker.getOutputDevice().describeString("Error sending the message");

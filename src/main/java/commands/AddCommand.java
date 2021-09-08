@@ -1,21 +1,21 @@
 package commands;
 
-import collectionManagementModule.Route;
-import serverManagementModule.OutputDeviceWorker;
-import collectionManagementModule.CollectionManagement;
+import collection_management_module.Route;
+import server_management_module.OutputDeviceWorker;
+import collection_management_module.RouteCollectionManagement;
 
 /**
  * the Command for add Route to collection
  */
 public class AddCommand implements Command {
-    private final CollectionManagement cm;
+    private final RouteCollectionManagement cm;
 
     /**
      * Constructor for load fields
      *
      * @param cm for load to command
      */
-    public AddCommand(CollectionManagement cm) {
+    public AddCommand(RouteCollectionManagement cm) {
         this.cm = cm;
     }
 
